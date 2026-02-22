@@ -1,3 +1,45 @@
+server:
+  port: ${PORT:8080}
+
 spring:
   application:
     name: dscatalog
+
+  profiles:
+    active: ${APP_PROFILE:test}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  # --- DATASOURCE (H2) ---
+  datasource:
+    url: jdbc:h2:mem:catalog_db
+    username: dev
+    password:
+    driver-class-name: org.h2.Driver
+
+  # --- H2 CONSOLE WEB ---
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # --- JPA / HIBERNATE ---
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: none # Options: none, update, create, create-drop
+    show-sql: true # Log SQL queries to the console
+    init:
+      mode: always
+    properties:
+      hibernate:
+        format_sql: true
+
+# src/main/resources/application-prod.yml
+logging:
+  level:
+    root: INFO
