@@ -8,6 +8,9 @@ spring:
   profiles:
     active: ${APP_PROFILE:test}
 
+  jpa:
+    open-in-view: false
+
 ---
 spring:
   config:
@@ -16,7 +19,7 @@ spring:
 
   # --- DATASOURCE (H2) ---
   datasource:
-    url: jdbc:h2:mem:catalog_db
+    url: jdbc:h2:mem:testdb
     username: dev
     password:
     driver-class-name: org.h2.Driver
@@ -30,14 +33,61 @@ spring:
   # --- JPA / HIBERNATE ---
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
     hibernate:
-      ddl-auto: none # Options: none, update, create, create-drop
+      ddl-auto: update # Options: none, update, create, create-drop
     show-sql: true # Log SQL queries to the console
     init:
       mode: always
     properties:
       hibernate:
         format_sql: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    hibernate:
+      ddl-auto: true
+    properties:
+      javax:
+        persistence:
+          schema-generation:
+            create-source: metadata
+            scripts:
+              action: create
+              create-target: create.sql
+      hibernate:
+        hbm2ddl:
+          delimiter: ;
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+  datasource:
+    url: //localhost:5432/dspesquisa
+    username: postgres
+    password: 1234567
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: ${DATABASE_URL}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
 
 # src/main/resources/application-prod.yml
 logging:
