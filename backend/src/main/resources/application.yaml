@@ -43,6 +43,10 @@ spring:
       hibernate:
         format_sql: true
 
+logging:
+  level:
+    root: INFO
+
 ---
 spring:
   config:
@@ -92,4 +96,4 @@ spring:
 # src/main/resources/application-prod.yml
 logging:
   level:
-    root: INFO
+    root: DEBUG
