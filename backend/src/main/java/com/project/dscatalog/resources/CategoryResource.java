@@ -1,7 +1,6 @@
 package com.project.dscatalog.resources;
 
 import com.project.dscatalog.dto.CategoryDTO;
-import com.project.dscatalog.entities.Category;
 import com.project.dscatalog.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
