@@ -3,10 +3,15 @@ package com.project.dscatalog.services;
 import com.project.dscatalog.dto.CategoryDTO;
 import com.project.dscatalog.entities.Category;
 import com.project.dscatalog.repositories.CategoryRepository;
+import com.project.dscatalog.services.exceptions.DatabaseException;
 import com.project.dscatalog.services.exceptions.ResourceEntityNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -16,6 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public class CategoryService {
 
+    private static final Logger log = LoggerFactory.getLogger(CategoryService.class);
     @Autowired
     private CategoryRepository repository;
 
@@ -49,6 +55,19 @@ public class CategoryService {
             return new CategoryDTO(entity);
         } catch (EntityNotFoundException e) {
             throw new ResourceEntityNotFoundException("Entity not found!");
+        }
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void delete(Long id) throws DatabaseException {
+        if (!repository.existsById(id)) {
+            throw new ResourceEntityNotFoundException("Entity not found!");
+        }
+        try {
+            repository.deleteById(id);
+            log.info("Delete category with id: " + id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Referential integrity failure!");
         }
     }
 }
