@@ -51,7 +51,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: true
+      ddl-auto: none # "none", "validate", "update", "create" ou "create-drop"
     properties:
       javax:
         persistence:
@@ -68,9 +68,9 @@ spring:
             non_contextual_creation: true
 
   datasource:
-    url: //localhost:5432/dspesquisa
+    url: jdbc:postgresql://localhost:5432/ds_catalog
     username: postgres
-    password: 1234567
+    password: ${DB_PASSWORD}
 
 ---
 spring:

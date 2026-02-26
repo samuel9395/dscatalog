@@ -54,14 +54,14 @@ public class CategoryService {
             entity = repository.save(entity);
             return new CategoryDTO(entity);
         } catch (EntityNotFoundException e) {
-            throw new ResourceEntityNotFoundException("Entity not found!");
+            throw new ResourceEntityNotFoundException("Entity not found with id: " + id);
         }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) throws DatabaseException {
         if (!repository.existsById(id)) {
-            throw new ResourceEntityNotFoundException("Entity not found!");
+            throw new ResourceEntityNotFoundException("Entity not found with id: " + id);
         }
         try {
             repository.deleteById(id);
