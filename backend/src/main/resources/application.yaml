@@ -1,3 +1,95 @@
+server:
+  port: ${PORT:8080}
+
 spring:
   application:
     name: dscatalog
+
+  profiles:
+    active: ${APP_PROFILE:test}
+
+  jpa:
+    open-in-view: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  # --- DATASOURCE (H2) ---
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: dev
+    password:
+    driver-class-name: org.h2.Driver
+
+  # --- H2 CONSOLE WEB ---
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # --- JPA / HIBERNATE ---
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    defer-datasource-initialization: true
+    hibernate:
+      ddl-auto: update # Options: none, update, create, create-drop
+    show-sql: true # Log SQL queries to the console
+    init:
+      mode: always
+    properties:
+      hibernate:
+        format_sql: true
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  jpa:
+    hibernate:
+      ddl-auto: none # "none", "validate", "update", "create" ou "create-drop"
+    properties:
+      javax:
+        persistence:
+          schema-generation:
+            create-source: metadata
+            scripts:
+              action: create
+              create-target: create.sql
+      hibernate:
+        hbm2ddl:
+          delimiter: ;
+        jdbc:
+          lob:
+            non_contextual_creation: true
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ds_catalog
+    username: postgres
+    password: ${DB_PASSWORD}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: ${DATABASE_URL}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+# src/main/resources/application-prod.yml
+logging:
+  level:
+    root: DEBUG
