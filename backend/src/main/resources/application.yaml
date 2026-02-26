@@ -43,10 +43,6 @@ spring:
       hibernate:
         format_sql: true
 
-logging:
-  level:
-    root: INFO
-
 ---
 spring:
   config:
