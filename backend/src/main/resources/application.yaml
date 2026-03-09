@@ -92,4 +92,4 @@ spring:
 # src/main/resources/application-prod.yml
 logging:
   level:
-    root: DEBUG
+    root: INFO
