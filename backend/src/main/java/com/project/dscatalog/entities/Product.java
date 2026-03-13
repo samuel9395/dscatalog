@@ -1,7 +1,6 @@
 package com.project.dscatalog.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 
 import java.io.Serial;
 import java.io.Serializable;
