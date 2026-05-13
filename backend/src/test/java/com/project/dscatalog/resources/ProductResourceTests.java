@@ -110,7 +110,7 @@ public class ProductResourceTests {
     }
 
     @Test
-    public void updateShouldReturnNotFoundProductDTOWhenIdExists() throws Exception {
+    public void updateShouldReturnNotFoundWhenDoesNotExists() throws Exception {
         String jasonBody = objectMapper.writeValueAsString(productDTO);
         ResultActions result = mockMvc.perform(put("/products/{id}", nonExistingId)
                 .content(jasonBody)
