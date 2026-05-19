@@ -1,40 +1,39 @@
-package com.project.dscatalog.entities;
+package com.project.dscatalog.dto;
 
-import jakarta.persistence.*;
+import com.project.dscatalog.entities.User;
 
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-@Entity
-@Table(name = "tb_user")
-public class User implements Serializable {
+public class UserDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String firstName;
     private String lastName;
-    @Column(unique = true)
     private String email;
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "tb_user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles = new HashSet<>();
+    private Set<RoleDTO> roles = new HashSet<>();
+    public UserDTO() {}
 
-    public User() {}
-
-    public User(Long id, String firstName, String lastName, String email, String password) {
+    public UserDTO(Long id, String firstName, String lastName, String email, String password) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+    }
+
+    public UserDTO(User entity) {
+        id = entity.getId();
+        firstName = entity.getFirstName();
+        lastName = entity.getLastName();
+        email = entity.getEmail();
+        password = entity.getPassword();
+        // pegando a lista de roles que são carregadas com a entidade User
+        entity.getRoles().forEach(role -> roles.add(new RoleDTO(role)));
     }
 
     public Long getId() {
@@ -77,19 +76,19 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
+    public Set<RoleDTO> getRoles() {
         return roles;
     }
 
     @Override
     public final boolean equals(Object o) {
-        if (!(o instanceof User user)) return false;
+        if (!(o instanceof UserDTO userDTO)) return false;
 
-        return id.equals(user.id);
+        return email.equals(userDTO.email);
     }
 
     @Override
     public int hashCode() {
-        return id.hashCode();
+        return email.hashCode();
     }
 }
