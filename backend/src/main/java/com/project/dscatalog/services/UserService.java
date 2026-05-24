@@ -55,7 +55,7 @@ public class UserService {
         User entity = new User();
         copyDtoToEntity(dto, entity);
         // O metodo encode() da classe BCryptPasswordEncoder (do framework Spring Security)
-        // transforma a senha em texto puro em um hash seguro e irreversível.
+        // transforma a senha em texto puro em um hash seguro e irreversivel.
         entity.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         entity = repository.save(entity);
         return new UserDTO(entity);
