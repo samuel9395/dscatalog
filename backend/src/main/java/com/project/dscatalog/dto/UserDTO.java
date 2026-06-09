@@ -17,7 +17,6 @@ public class UserDTO implements Serializable {
     private String firstName;
 
     private String lastName;
-
     @Email(message = "Enter a valid email address")
     private String email;
 
