@@ -1,0 +1,249 @@
+{
+  "check_status": true,
+
+  "commit_type": {
+    "enable": true,
+    "initial_value": "feat",
+    "max_items": 30,
+    "infer_type_from_branch": false,
+    "append_emoji_to_label": false,
+    "append_emoji_to_commit": false,
+
+    "options": [
+      {
+        "value": "feat",
+        "label": "feat",
+        "hint": "A new feature",
+        "trailer": "Changelog: feature"
+      },
+      {
+        "value": "fix",
+        "label": "fix",
+        "hint": "A bug fix",
+        "trailer": "Changelog: fix"
+      },
+      {
+        "value": "docs",
+        "label": "docs",
+        "hint": "Documentation only changes",
+        "trailer": "Changelog: documentation"
+      },
+      {
+        "value": "refactor",
+        "label": "refactor",
+        "hint": "Code refactoring without behavior changes",
+        "trailer": "Changelog: refactor"
+      },
+      {
+        "value": "perf",
+        "label": "perf",
+        "hint": "Performance improvements",
+        "trailer": "Changelog: performance"
+      },
+      {
+        "value": "test",
+        "label": "test",
+        "hint": "Adding or fixing tests",
+        "trailer": "Changelog: test"
+      },
+      {
+        "value": "build",
+        "label": "build",
+        "hint": "Build system or dependency changes",
+        "trailer": "Changelog: build"
+      },
+      {
+        "value": "ci",
+        "label": "ci",
+        "hint": "CI/CD pipeline changes",
+        "trailer": "Changelog: ci"
+      },
+      {
+        "value": "chore",
+        "label": "chore",
+        "hint": "Maintenance and non-functional changes",
+        "trailer": "Changelog: chore"
+      },
+      {
+        "value": "security",
+        "label": "security",
+        "hint": "Security-related updates",
+        "trailer": "Changelog: security"
+      },
+      {
+        "value": "study",
+        "label": "study",
+        "hint": "Learning, exercises and study-related changes",
+        "trailer": "Changelog: study"
+      },
+      {
+        "value": "",
+        "label": "none"
+      }
+    ]
+  },
+
+  "commit_scope": {
+    "enable": true,
+    "custom_scope": true,
+    "max_items": 30,
+    "initial_value": "app",
+
+    "options": [
+      {
+        "value": "app",
+        "label": "app"
+      },
+      {
+        "value": "shared",
+        "label": "shared"
+      },
+      {
+        "value": "server",
+        "label": "server"
+      },
+      {
+        "value": "tools",
+        "label": "tools"
+      },
+      {
+        "value": "backend",
+        "label": "backend"
+      },
+      {
+        "value": "frontend",
+        "label": "frontend"
+      },
+      {
+        "value": "infra",
+        "label": "infra"
+      },
+      {
+        "value": "database",
+        "label": "database"
+      },
+      {
+        "value": "alma-base",
+        "label": "alma-base"
+      },
+      {
+        "value": "im",
+        "label": "im"
+      },
+      {
+        "value": "im-custom-dasa",
+        "label": "im-custom-dasa"
+      },
+      {
+        "value": "bam",
+        "label": "bam"
+      },
+      {
+        "value": "dem",
+        "label": "dem"
+      },
+      {
+        "value": "ml",
+        "label": "ml"
+      },
+      {
+        "value": "env-specific",
+        "label": "env-specific"
+      },
+      {
+        "value": "",
+        "label": "none"
+      }
+    ]
+  },
+
+  "check_ticket": {
+    "infer_ticket": true,
+    "confirm_ticket": true,
+    "add_to_title": true,
+    "append_hashtag": true,
+    "surround": "",
+    "title_position": "start"
+  },
+
+  "commit_title": {
+    "max_size": 100
+  },
+
+  "commit_body": {
+    "enable": true,
+    "required": false
+  },
+
+  "commit_footer": {
+    "enable": true,
+    "initial_value": [],
+
+    "options": [
+      "closes",
+      "trailer",
+      "breaking-change",
+      "deprecated",
+      "custom"
+    ]
+  },
+
+  "breaking_change": {
+    "add_exclamation_to_title": true
+  },
+
+  "confirm_with_editor": false,
+  "confirm_commit": true,
+  "print_commit_output": true,
+
+  "branch_pre_commands": [],
+  "branch_post_commands": [],
+
+  "worktree_pre_commands": [],
+  "worktree_post_commands": [],
+
+  "branch_user": {
+    "enable": true,
+    "required": false,
+    "separator": "/"
+  },
+
+  "branch_type": {
+    "enable": true,
+    "separator": "/"
+  },
+
+  "branch_version": {
+    "enable": true,
+    "required": false,
+    "separator": "/"
+  },
+
+  "branch_ticket": {
+    "enable": true,
+    "required": false,
+    "separator": "-"
+  },
+
+  "branch_description": {
+    "max_length": 150,
+    "separator": "-"
+  },
+
+  "branch_action_default": "branch",
+
+//  "branch_order": [
+//    "type",
+//    "user",
+//    "ticket",
+//    "description"
+//  ],
+  "branch_order": [
+    "type",
+    "description"
+  ],
+
+  "enable_worktrees": true,
+
+  "overrides": {}
+}
