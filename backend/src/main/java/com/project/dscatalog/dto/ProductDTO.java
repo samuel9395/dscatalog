@@ -2,6 +2,7 @@ package com.project.dscatalog.dto;
 
 import com.project.dscatalog.entities.Category;
 import com.project.dscatalog.entities.Product;
+import com.project.dscatalog.projections.ProductProjection;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Positive;

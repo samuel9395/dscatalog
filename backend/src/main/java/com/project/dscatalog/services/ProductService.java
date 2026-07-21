@@ -5,21 +5,26 @@ import com.project.dscatalog.dto.CategoryDTO;
 import com.project.dscatalog.dto.ProductDTO;
 import com.project.dscatalog.entities.Category;
 import com.project.dscatalog.entities.Product;
+import com.project.dscatalog.projections.ProductProjection;
 import com.project.dscatalog.repositories.CategoryRepository;
 import com.project.dscatalog.repositories.ProductRepository;
 import com.project.dscatalog.services.exceptions.DatabaseException;
 import com.project.dscatalog.services.exceptions.ResourceEntityNotFoundException;
+import com.project.dscatalog.util.Utils;
 import jakarta.persistence.EntityNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -76,6 +81,43 @@ public class ProductService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Referential integrity failure!");
         }
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ProductDTO> findAllPaged(String name, String categoryId, Pageable pageable) {
+
+        // Converte a String "1,2,3" em uma lista de IDs de categoria.
+        // Se nenhum filtro for informado, utiliza uma lista vazia.
+        List<Long> categoryIds = Arrays.asList();
+        if (categoryId != null && !categoryId.isEmpty()) {
+            categoryIds = Arrays.stream(categoryId.split(","))
+                    .map(Long::parseLong)
+                    .toList();
+        }
+
+        // Primeira consulta: busca apenas os dados necessários para a paginação
+        // (projeção com os IDs dos produtos da página atual).
+        Page<ProductProjection> page = repository.searchProducts(categoryIds, name, pageable);
+
+        // Extrai os IDs retornados pela primeira consulta.
+        List<Long> productsIds = page.map(ProductProjection::getId).toList();
+
+        // Segunda consulta: carrega as entidades completas com suas categorias
+        // usando JOIN FETCH, evitando o problema de N+1 consultas.
+        List<Product> entities = repository.searchProductsWithCategories(productsIds);
+
+        // Reorganiza as entidades na mesma ordem da consulta paginada,
+        // preservando a ordenação original dos resultados.
+        entities = Utils.replace(page.getContent(), entities);
+
+        // Converte as entidades para DTOs.
+        List<ProductDTO> dtos = entities.stream()
+                .map(product -> new ProductDTO(product, product.getCategories()))
+                .toList();
+
+        // Reconstrói a página utilizando os DTOs, preservando as informações
+        // de paginação e a quantidade total de registros.
+        return new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());
     }
 
     private void copyDtoToEntity(ProductDTO dto, Product entity) {
