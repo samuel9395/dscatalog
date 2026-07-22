@@ -1,7 +1,7 @@
 package com.project.dscatalog.projections;
 
-public interface ProductProjection {
+// Agora a classe está herdando uma interface genérica
+public interface ProductProjection extends IdProjection<Long> {
 
-    Long getId();
     String getName();
 }

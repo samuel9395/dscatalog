@@ -15,7 +15,7 @@ spring:
     name: dscatalog
 
   profiles:
-    active: ${APP_PROFILE:test}
+    active: ${APP_PROFILE:dev}
 
   jpa:
     open-in-view: false
@@ -62,24 +62,25 @@ spring:
     hibernate:
       ddl-auto: none # "none", "validate", "update", "create" ou "create-drop"
     properties:
-      javax:
-        persistence:
-          schema-generation:
-            create-source: metadata
-            scripts:
-              action: create
-              create-target: create.sql
+#      javax:
+#        persistence:
+#          schema-generation:
+#            create-source: metadata
+#            scripts:
+#              action: create
+#              create-target: create.sql
       hibernate:
-        hbm2ddl:
-          delimiter: ;
+#        hbm2ddl:
+#          delimiter: ;
         jdbc:
           lob:
             non_contextual_creation: true
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/ds_catalog
+    url: jdbc:postgresql://localhost:5433/ds_catalog
     username: postgres
-    password: ${DB_PASSWORD}
+    password: ${DB_PASSWORD:123456}
 
 ---
 spring:

@@ -104,11 +104,14 @@ public class ProductService {
 
         // Segunda consulta: carrega as entidades completas com suas categorias
         // usando JOIN FETCH, evitando o problema de N+1 consultas.
+        // Lista desordenada vinda do banco.
         List<Product> entities = repository.searchProductsWithCategories(productsIds);
 
         // Reorganiza as entidades na mesma ordem da consulta paginada,
         // preservando a ordenação original dos resultados.
-        entities = Utils.replace(page.getContent(), entities);
+        // Aqui foi feito o Cast de List<Product>, pois o metodo usado é genérico.
+        // Lista convertida em lista ordenada, com base na ordenação da página.
+        entities = (List<Product>) Utils.replace(page.getContent(), entities);
 
         // Converte as entidades para DTOs.
         List<ProductDTO> dtos = entities.stream()
@@ -120,6 +123,7 @@ public class ProductService {
         return new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());
     }
 
+    // Transforma a entidade em dto
     private void copyDtoToEntity(ProductDTO dto, Product entity) {
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());
