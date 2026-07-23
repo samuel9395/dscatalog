@@ -13,7 +13,6 @@ import com.project.dscatalog.repositories.UserRepository;
 import com.project.dscatalog.services.exceptions.DatabaseException;
 import com.project.dscatalog.services.exceptions.ResourceEntityNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -63,8 +61,14 @@ public class UserService implements UserDetailsService {
     public UserDTO insert(UserInsertDTO dto) {
         User entity = new User();
         copyDtoToEntity(dto, entity);
-        // O metodo encode() da classe BCryptPasswordEncoder (do framework Spring Security)
-        // transforma a senha em texto puro em um hash seguro e irreversivel.
+
+        // Garante que novos usuários iniciem com o perfil padrão.
+        entity.getRoles().clear();
+        // Busca a role no banco e associa ao usuário.
+        Role role = roleRepository.findByAuthority("ROLE_OPERATOR");
+        entity.getRoles().add(role);
+
+        // Armazena a senha com hash seguro (não em texto puro).
         entity.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         entity = repository.save(entity);
         return new UserDTO(entity);
