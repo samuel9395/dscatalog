@@ -19,6 +19,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+/**
+ * Configuracao de seguranca do Resource Server e CORS da API.
+ */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -27,6 +30,9 @@ public class ResourceServerConfig {
     @Value("${cors.origins}")
     private String corsOrigins;
 
+    /**
+     * Libera o console H2 no perfil de teste.
+     */
     @Bean
     @Profile("test")
     @Order(1)
@@ -37,6 +43,9 @@ public class ResourceServerConfig {
         return http.build();
     }
 
+    /**
+     * Cadeia principal de seguranca para recursos da API.
+     */
     @Bean
     @Order(3)
     public SecurityFilterChain rsSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -48,6 +57,9 @@ public class ResourceServerConfig {
         return http.build();
     }
 
+    /**
+     * Converte claims do JWT para authorities reconhecidas pelo Spring Security.
+     */
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
@@ -59,6 +71,9 @@ public class ResourceServerConfig {
         return jwtAuthenticationConverter;
     }
 
+    /**
+     * Define a politica de CORS permitida para a API.
+     */
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
 

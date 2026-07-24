@@ -1,5 +1,6 @@
 package com.project.dscatalog.entities;
 
+import com.project.dscatalog.projections.IdProjection;
 import jakarta.persistence.*;
 
 import java.io.Serial;
@@ -10,7 +11,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "tb_product")
-public class Product implements Serializable {
+public class Product implements Serializable, IdProjection<Long> {
     @Serial
     private static final long serialVersionUID = 1L;
 
@@ -44,6 +45,14 @@ public class Product implements Serializable {
         this.date = date;
     }
 
+    /**
+     * Ao implementar a ‘interface’'IdProjection<Long>' não dá erro,
+     * pois já temos o metodo getId do tipo Long.
+     * Sendo assim foi implementado o anotation @Override para o compilador saber que
+     * é esse metodo tá implementando a interface.
+     * @return
+     */
+    @Override
     public Long getId() {
         return id;
     }

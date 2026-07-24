@@ -46,6 +46,10 @@ import java.util.List;
 import java.util.UUID;
 
 @Configuration
+/**
+ * Configuracao do Authorization Server OAuth2/JWT.
+ * Define clientes, geracao de token e customizacoes de claims.
+ */
 public class AuthorizationServerConfig {
 
     @Value("${security.client-id}")
@@ -63,6 +67,9 @@ public class AuthorizationServerConfig {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    /**
+     * Cadeia de seguranca responsavel pelos endpoints do authorization server.
+     */
     @Bean
     @Order(2)
     public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
@@ -89,16 +96,25 @@ public class AuthorizationServerConfig {
         return http.build();
     }
 
+    /**
+     * Armazena autorizacoes emitidas em memoria.
+     */
     @Bean
     public OAuth2AuthorizationService authorizationService() {
         return new InMemoryOAuth2AuthorizationService();
     }
 
+    /**
+     * Armazena consentimentos de autorizacao em memoria.
+     */
     @Bean
     public OAuth2AuthorizationConsentService oAuth2AuthorizationConsentService() {
         return new InMemoryOAuth2AuthorizationConsentService();
     }
 
+    /**
+     * Registra o cliente OAuth2 utilizado pela aplicacao.
+     */
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         // @formatter:off
@@ -117,6 +133,9 @@ public class AuthorizationServerConfig {
         return new InMemoryRegisteredClientRepository(registeredClient);
     }
 
+    /**
+     * Configura formato e tempo de vida do access token JWT.
+     */
     @Bean
     public TokenSettings tokenSettings() {
         // @formatter:off
@@ -127,16 +146,25 @@ public class AuthorizationServerConfig {
 		// @formatter:on
     }
 
+    /**
+     * Configuracoes adicionais do cliente OAuth2.
+     */
     @Bean
     public ClientSettings clientSettings() {
         return ClientSettings.builder().build();
     }
 
+    /**
+     * Configuracoes padrao dos endpoints do authorization server.
+     */
     @Bean
     public AuthorizationServerSettings authorizationServerSettings() {
         return AuthorizationServerSettings.builder().build();
     }
 
+    /**
+     * Pipeline de geracao de tokens OAuth2.
+     */
     @Bean
     public OAuth2TokenGenerator<? extends OAuth2Token> tokenGenerator() {
         NimbusJwtEncoder jwtEncoder = new NimbusJwtEncoder(jwkSource());
@@ -146,6 +174,9 @@ public class AuthorizationServerConfig {
         return new DelegatingOAuth2TokenGenerator(jwtGenerator, accessTokenGenerator);
     }
 
+    /**
+     * Adiciona claims customizadas ao JWT de access token.
+     */
     @Bean
     public OAuth2TokenCustomizer<JwtEncodingContext> tokenCustomizer() {
         return context -> {
@@ -162,11 +193,17 @@ public class AuthorizationServerConfig {
         };
     }
 
+    /**
+     * Decoder JWT utilizado para validar tokens assinados.
+     */
     @Bean
     public JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
         return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
     }
 
+    /**
+     * Exponibiliza a fonte de chaves JWK para assinatura dos tokens.
+     */
     @Bean
     public JWKSource<SecurityContext> jwkSource() {
         RSAKey rsaKey = generateRsa();

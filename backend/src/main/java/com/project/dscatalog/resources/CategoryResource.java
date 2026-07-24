@@ -3,16 +3,15 @@ package com.project.dscatalog.resources;
 import com.project.dscatalog.dto.CategoryDTO;
 import com.project.dscatalog.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import java.util.List;
 
-import java.net.URI;
-
+/**
+ * Endpoints REST para operacoes de categorias.
+ */
 @RestController
 @RequestMapping(value = "/categories")
 public class CategoryResource {
@@ -20,27 +19,37 @@ public class CategoryResource {
     @Autowired
     private CategoryService service;
 
+    /**
+     * Lista todas as categorias cadastradas.
+     */
     @GetMapping
-    public ResponseEntity<Page<CategoryDTO>> findAll(Pageable pageable) {
-        Page<CategoryDTO> categories = service.findAllPaged(pageable);
+    public ResponseEntity<List<CategoryDTO>> findAll() {
+        List<CategoryDTO> categories = service.findAllPaged();
         return ResponseEntity.ok().body(categories);
     }
 
+    /**
+     * Busca uma categoria pelo identificador.
+     */
     @GetMapping(value = "/{id}")
     public ResponseEntity<CategoryDTO> findById(@PathVariable Long id) {
         CategoryDTO dto = service.findById(id);
         return ResponseEntity.ok().body(dto);
     }
 
+    /**
+     * Cria uma nova categoria.
+     */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @PostMapping
     public ResponseEntity<CategoryDTO> insert(@RequestBody CategoryDTO dto) {
         dto = service.insert(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(dto.getId()).toUri();
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    /**
+     * Atualiza os dados de uma categoria existente.
+     */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @PutMapping(value = "/{id}")
     public ResponseEntity<CategoryDTO> update(@PathVariable Long id, @RequestBody CategoryDTO dto) {
@@ -48,6 +57,9 @@ public class CategoryResource {
         return ResponseEntity.ok().body(dto);
     }
 
+    /**
+     * Remove uma categoria pelo identificador.
+     */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<CategoryDTO> delete(@PathVariable Long id) {

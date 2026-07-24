@@ -13,11 +13,11 @@ public class UserDTO implements Serializable {
 
     private Long id;
 
-    @NotBlank(message = "Required")
+    @NotBlank(message = "Campo obrigatório")
     private String firstName;
-
     private String lastName;
-    @Email(message = "Enter a valid email address")
+
+    @Email(message = "Insira um email válido")
     private String email;
 
     private String password;

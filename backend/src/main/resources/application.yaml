@@ -20,68 +20,101 @@ spring:
   jpa:
     open-in-view: false
 
+  mail:
+    host: ${APP_HOST}
+    username: ${APP_EMAIL}
+    password: ${APP_PASSWORD}
+    port: 587
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        debug: false
+
+email:
+  password-recover:
+    token:
+      minutes: ${PASSWORD_RECOVER_TOKEN_MINUTES:30}
+    uri: ${PASSWORD_RECOVER_URI:http://localhost:5173/recover-password/}
+
+  remetente: "✉️ Dscatalog Application"
+  to: samuelb2f@outlook.com
+  title: Recuperação de senha
+  message: "Acesse o link para definir uma nova senha:"
+  link: http://localhost:5173/recover-password/
+
+
 ---
+#=================
+# TEST ENVIRONMENT
+#=================
 spring:
   config:
     activate:
       on-profile: test
 
-  # --- DATASOURCE (H2) ---
   datasource:
     url: jdbc:h2:mem:testdb
     username: dev
     password:
     driver-class-name: org.h2.Driver
 
-  # --- H2 CONSOLE WEB ---
   h2:
     console:
       enabled: true
       path: /h2-console
 
-  # --- JPA / HIBERNATE ---
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
-    defer-datasource-initialization: true
     hibernate:
-      ddl-auto: update # Options: none, update, create, create-drop
-    show-sql: true # Log SQL queries to the console
-    init:
-      mode: always
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+    show-sql: true
     properties:
       hibernate:
         format_sql: true
 
+  sql:
+    init:
+      mode: always
+
 ---
+#=================
+# DEV ENVIRONMENT
+#=================
 spring:
   config:
     activate:
       on-profile: dev
 
   jpa:
+    defer-datasource-initialization: true
     hibernate:
-      ddl-auto: none # "none", "validate", "update", "create" ou "create-drop"
+      ddl-auto: ${JPA_DDL_AUTO:update} # create update
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+
     properties:
-      javax:
-        persistence:
-          schema-generation:
-            create-source: metadata
-            scripts:
-              action: create
-              create-target: create.sql
       hibernate:
         hbm2ddl:
           delimiter: ;
-        jdbc:
-          lob:
-            non_contextual_creation: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/ds_catalog
+    url: jdbc:postgresql://localhost:5433/dscatalog
     username: postgres
-    password: ${DB_PASSWORD}
+    password: 1234567
+
+  sql:
+    init:
+      mode: ${SQL_INIT_MODE:never} # never always
 
 ---
+#=================
+# PROD ENVIRONMENT
+#=================
 spring:
   config:
     activate:
@@ -98,7 +131,6 @@ spring:
       hibernate:
         format_sql: false
 
-# src/main/resources/application-prod.yml
 logging:
   level:
     root: INFO

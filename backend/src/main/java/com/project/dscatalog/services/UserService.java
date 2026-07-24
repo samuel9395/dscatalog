@@ -13,7 +13,6 @@ import com.project.dscatalog.repositories.UserRepository;
 import com.project.dscatalog.services.exceptions.DatabaseException;
 import com.project.dscatalog.services.exceptions.ResourceEntityNotFoundException;
 import jakarta.persistence.EntityNotFoundException;
-import org.apache.juli.logging.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -32,6 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Camada de servico para cadastro, atualizacao e autenticacao de usuarios.
+ */
 @Service
 public class UserService implements UserDetailsService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
@@ -45,12 +46,31 @@ public class UserService implements UserDetailsService {
     @Autowired
     private PasswordEncoder bCryptPasswordEncoder;
 
+    @Autowired
+    private AuthService authService;
+
+    /**
+     * Lista usuarios de forma paginada.
+     */
     @Transactional(readOnly = true)
     public Page<UserDTO> findAllPaged(Pageable pageable) {
         Page<User> list = repository.findAll(pageable);
         return list.map(UserDTO::new);
     }
 
+    /**
+     * Busca o 'usuário' logado.
+     * @return
+     */
+    @Transactional(readOnly = true)
+    public UserDTO findConnectedUser() {
+        User entity = authService.authenticated();
+        return new UserDTO(entity);
+    }
+
+    /**
+     * Busca um usuario por id e retorna seu DTO.
+     */
     @Transactional(readOnly = true)
     public UserDTO findById(Long id) {
         Optional<User> obj = repository.findById(id);
@@ -59,17 +79,29 @@ public class UserService implements UserDetailsService {
         return new UserDTO(entity);
     }
 
+    /**
+     * Cadastra um novo usuario com role padrao e senha criptografada.
+     */
     @Transactional
     public UserDTO insert(UserInsertDTO dto) {
         User entity = new User();
         copyDtoToEntity(dto, entity);
-        // O metodo encode() da classe BCryptPasswordEncoder (do framework Spring Security)
-        // transforma a senha em texto puro em um hash seguro e irreversivel.
+
+        // Garante que novos usuários iniciem com o perfil padrão.
+        entity.getRoles().clear();
+        // Busca a role no banco e associa ao usuário.
+        Role role = roleRepository.findByAuthority("ROLE_OPERATOR");
+        entity.getRoles().add(role);
+
+        // Armazena a senha com hash seguro (não em texto puro).
         entity.setPassword(bCryptPasswordEncoder.encode(dto.getPassword()));
         entity = repository.save(entity);
         return new UserDTO(entity);
     }
 
+    /**
+     * Atualiza os dados de um usuario existente.
+     */
     @Transactional
     public UserDTO update(Long id, UserUpdateDTO dto) {
         try {
@@ -82,6 +114,9 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    /**
+     * Remove um usuario e trata erros de integridade referencial.
+     */
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) throws DatabaseException {
         if (!repository.existsById(id)) {
@@ -95,7 +130,9 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    // dados padrão do usuário
+    /**
+     * Copia dados de entrada para a entidade e sincroniza as roles associadas.
+     */
     private void copyDtoToEntity(UserDTO dto, User entity) {
         entity.setFirstName(dto.getFirstName());
         entity.setLastName(dto.getLastName());
@@ -108,6 +145,9 @@ public class UserService implements UserDetailsService {
         }
     }
 
+    /**
+     * Metodo exigido pelo Spring Security para carregar usuario e authorities no login.
+     */
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
