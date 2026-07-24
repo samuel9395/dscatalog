@@ -12,10 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-
+/**
+ * Endpoints REST para gerenciamento de usuários.
+ */
 @RestController
 @RequestMapping(value = "/users")
 public class UserResource {
@@ -23,6 +23,9 @@ public class UserResource {
     @Autowired
     private UserService service;
 
+    /**
+     * Lista usuários de forma paginada.
+     */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping
     public ResponseEntity<Page<UserDTO>> findAll(Pageable pageable) {
@@ -30,6 +33,9 @@ public class UserResource {
         return ResponseEntity.ok().body(categories);
     }
 
+    /**
+     * Busca um usuário pelo identificador.
+     */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @GetMapping(value = "/{id}")
     public ResponseEntity<UserDTO> findById(@PathVariable Long id) {
@@ -37,14 +43,29 @@ public class UserResource {
         return ResponseEntity.ok().body(dto);
     }
 
+    /**
+     * Busca 'usuário' autenticado.
+     * @return
+     */
+    @PreAuthorize("hasAnyRole('ROLE_OPERATOR','ROLE_ADMIN')")
+    @GetMapping(value = "/profile")
+    public ResponseEntity<UserDTO> findConnectedUser() {
+        UserDTO dto = service.findConnectedUser();
+        return ResponseEntity.ok().body(dto);
+    }
+
+    /**
+     * Cria um usuário.
+     */
     @PostMapping
     public ResponseEntity<UserDTO> insert(@Valid @RequestBody UserInsertDTO dto) {
         UserDTO newDTO = service.insert(dto);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(newDTO.getId()).toUri();
         return ResponseEntity.status(HttpStatus.CREATED).body(newDTO);
     }
 
+    /**
+     * Atualiza os dados de um usuário existente.
+     */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @PutMapping(value = "/{id}")
     public ResponseEntity<UserDTO> update(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto) {
@@ -52,6 +73,9 @@ public class UserResource {
         return ResponseEntity.ok().body(newDto);
     }
 
+    /**
+     * Remove um usuário pelo identificador.
+     */
     @PreAuthorize("hasAnyRole('ROLE_ADMIN')")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<UserDTO> delete(@PathVariable Long id) {

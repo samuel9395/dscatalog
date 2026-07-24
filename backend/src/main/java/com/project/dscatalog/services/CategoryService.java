@@ -10,8 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Camada de servico para regras de negocio e persistencia de categorias.
+ */
 @Service
 public class CategoryService {
 
@@ -26,12 +27,18 @@ public class CategoryService {
     @Autowired
     private CategoryRepository repository;
 
+    /**
+     * Retorna todas as categorias convertidas para DTO.
+     */
     @Transactional(readOnly = true)
     public List<CategoryDTO> findAllPaged() {
         List<Category> list = repository.findAll();
         return list.stream().map(CategoryDTO::new).toList();
     }
 
+    /**
+     * Busca uma categoria pelo id e dispara excecao se nao existir.
+     */
     @Transactional(readOnly = true)
     public CategoryDTO findById(Long id) {
         Optional<Category> obj = repository.findById(id);
@@ -39,6 +46,9 @@ public class CategoryService {
         return new CategoryDTO(entity);
     }
 
+    /**
+     * Cria uma nova categoria.
+     */
     @Transactional
     public CategoryDTO insert(CategoryDTO dto) {
         Category entity = new Category();
@@ -47,6 +57,9 @@ public class CategoryService {
         return new CategoryDTO(entity);
     }
 
+    /**
+     * Atualiza uma categoria existente.
+     */
     @Transactional
     public CategoryDTO update(Long id, CategoryDTO dto) {
         try {
@@ -59,6 +72,9 @@ public class CategoryService {
         }
     }
 
+    /**
+     * Remove uma categoria e trata erros de integridade referencial.
+     */
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) throws DatabaseException {
         if (!repository.existsById(id)) {

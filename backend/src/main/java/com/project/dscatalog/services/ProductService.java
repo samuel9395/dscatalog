@@ -27,6 +27,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Camada de servico para operacoes de produtos, filtros e mapeamento para DTO.
+ */
 @Service
 public class ProductService {
     private static final Logger log = LoggerFactory.getLogger(ProductService.class);
@@ -37,12 +40,18 @@ public class ProductService {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    /**
+     * Lista produtos de forma paginada sem filtros.
+     */
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAllPaged(Pageable pageable) {
         Page<Product> list = repository.findAll(pageable);
         return list.map(ProductDTO::new);
     }
 
+    /**
+     * Busca um produto por id e retorna o DTO com categorias.
+     */
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
         Optional<Product> obj = repository.findById(id);
@@ -50,6 +59,9 @@ public class ProductService {
         return new ProductDTO(entity, entity.getCategories());
     }
 
+    /**
+     * Insere um novo produto.
+     */
     @Transactional
     public ProductDTO insert(ProductDTO dto) {
         Product entity = new Product();
@@ -58,6 +70,9 @@ public class ProductService {
         return new ProductDTO(entity);
     }
 
+    /**
+     * Atualiza os dados de um produto existente.
+     */
     @Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
         try {
@@ -70,6 +85,9 @@ public class ProductService {
         }
     }
 
+    /**
+     * Remove um produto e trata erros de integridade referencial.
+     */
     @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) throws DatabaseException {
         if (!repository.existsById(id)) {
@@ -83,6 +101,9 @@ public class ProductService {
         }
     }
 
+    /**
+     * Lista produtos com filtros e evita N+1 usando consulta em duas etapas.
+     */
     @Transactional(readOnly = true)
     public Page<ProductDTO> findAllPaged(String name, String categoryId, Pageable pageable) {
 
@@ -123,7 +144,9 @@ public class ProductService {
         return new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());
     }
 
-    // Transforma a entidade em dto
+    /**
+     * Copia os dados do DTO para a entidade de produto.
+     */
     private void copyDtoToEntity(ProductDTO dto, Product entity) {
         entity.setName(dto.getName());
         entity.setDescription(dto.getDescription());

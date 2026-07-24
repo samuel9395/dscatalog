@@ -20,6 +20,34 @@ spring:
   jpa:
     open-in-view: false
 
+  mail:
+    host: ${APP_HOST}
+    username: ${APP_EMAIL}
+    password: ${APP_PASSWORD}
+    port: 587
+
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+        debug: false
+
+email:
+  password-recover:
+    token:
+      minutes: ${PASSWORD_RECOVER_TOKEN_MINUTES:30}
+    uri: ${PASSWORD_RECOVER_URI:http://localhost:5173/recover-password/}
+
+  remetente: "✉️ Dscatalog Application"
+  to: samuelb2f@outlook.com
+  title: Recuperação de senha
+  message: "Acesse o link para definir uma nova senha:"
+  link: http://localhost:5173/recover-password/
+
+
 ---
 #=================
 # TEST ENVIRONMENT
