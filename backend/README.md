@@ -124,6 +124,21 @@ Fluxo:
 - `PUT /products/{id}` (ADMIN, OPERATOR)
 - `DELETE /products/{id}` (ADMIN, OPERATOR)
 
+## Colecao Postman
+
+A pasta `postman` contem os arquivos para facilitar os testes manuais da API:
+
+- `postman/dscatalog.postman_collection.json`: colecao com endpoints principais
+- `postman/dscatalog-env.postman_environment.json`: variaveis de ambiente (base URL, token e credenciais)
+
+### Como usar
+
+1. Importe a collection `postman/dscatalog.postman_collection.json` no Postman.
+2. Importe o environment `postman/dscatalog-env.postman_environment.json`.
+3. Selecione o environment importado.
+4. Ajuste as variaveis conforme o perfil em execucao (`test` ou `dev`), se necessario.
+5. Execute primeiro a requisicao de token para preencher o `access_token` e depois teste as rotas protegidas.
+
 ## Configuracao por Ambiente
 
 Arquivo principal: `src/main/resources/application.yaml`
