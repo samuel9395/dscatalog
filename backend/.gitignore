@@ -37,3 +37,5 @@ build/
 temp/
 .env-intellij
 .gitattributes
+.env
+../.idea
