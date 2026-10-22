@@ -1,6 +1,8 @@
+#=================
+# GLOBAL SETTINGS
+#=================
 server:
   port: ${PORT:8080}
-#=================
 
 security:
   client-id: ${CLIENT_ID:myclientid}
@@ -11,8 +13,6 @@ security:
 cors:
   origins: ${CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
 
-#=================
-
 aws:
   access_key_id: ${AWS_KEY:empty}
   secret_access_key: ${AWS_SECRET:empty}
@@ -20,7 +20,6 @@ aws:
 s3:
   bucket: ${DSCATALOG_BUCKET_NAME:empty}
   region: ${DSCATALOG_BUCKET_REGION:sa-east-1}
-#=================
 
 spring:
   application:
@@ -63,7 +62,6 @@ email:
   title: Recuperação de senha
   message: "Acesse o link para definir uma nova senha:"
   link: http://localhost:5173/recover-password/
-
 
 ---
 #=================

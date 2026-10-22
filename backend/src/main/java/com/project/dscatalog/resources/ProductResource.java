@@ -1,6 +1,7 @@
 package com.project.dscatalog.resources;
 
 import com.project.dscatalog.dto.ProductDTO;
+import com.project.dscatalog.dto.UriDTO;
 import com.project.dscatalog.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Endpoints REST para consulta e manutencao de produtos.
@@ -70,5 +72,15 @@ public class ProductResource {
     public ResponseEntity<ProductDTO> delete(@PathVariable Long id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * Faz ‘upload’ de uma imagem para o Amazon S3 e retorna a URI da imagem.
+     */
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
+    @PostMapping(value = "/image")
+    public ResponseEntity<UriDTO> uploadImage(@RequestParam MultipartFile file) {
+        UriDTO dto = service.uploadFile(file);
+        return ResponseEntity.ok().body(dto);
     }
 }
